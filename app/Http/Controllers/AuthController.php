@@ -44,29 +44,22 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        // --- ID GENERATION LOGIC ---
         $datePart = Carbon::now()->format('ymd');
         $prefix = 'CUST' . $datePart;
-
-        // Find the latest customer created today
         $latestCustomer = Customer::where('id', 'LIKE', $prefix . '%')->latest('id')->first();
 
         if ($latestCustomer) {
-            // Extract the serial number part and increment it
             $lastSerial = (int) substr($latestCustomer->id, -5);
             $newSerial = $lastSerial + 1;
         } else {
-            // If no customer today, start from 1
             $newSerial = 1;
         }
 
-        // Pad the serial number with leading zeros to make it 5 digits
         $serialPart = str_pad($newSerial, 5, '0', STR_PAD_LEFT);
         $newCustomerId = $prefix . $serialPart;
-        // --- END OF ID GENERATION LOGIC ---
 
         $customer = Customer::create([
-            'id' => $newCustomerId, // <-- Use the newly generated ID
+            'id' => $newCustomerId, 
             'nama' => $request->nama,
             'email' => $request->email,
             'nomor_telepon' => $request->notelpon,

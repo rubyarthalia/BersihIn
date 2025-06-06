@@ -12,7 +12,6 @@
         {{-- NAMA --}}
         <div style="margin-bottom: 15px;">
             <input type="text" placeholder="Nama" name="nama" value="{{ old('nama') }}" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
-            {{-- This block will show the error for the 'nama' field --}}
             @error('nama')
                 <div style="color: red; font-size: 12px; margin-top: 5px;">{{ $message }}</div>
             @enderror
@@ -21,7 +20,6 @@
         {{-- EMAIL --}}
         <div style="margin-bottom: 15px;">
             <input type="email" placeholder="Email" name="email" value="{{ old('email') }}" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
-            {{-- This block will show the error for the 'email' field --}}
             @error('email')
                 <div style="color: red; font-size: 12px; margin-top: 5px;">{{ $message }}</div>
             @enderror
@@ -30,7 +28,6 @@
         {{-- NOMOR TELEPON --}}
         <div style="margin-bottom: 15px;">
             <input type="text" placeholder="Nomor Telpon" name="notelpon" value="{{ old('notelpon') }}" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
-            {{-- This block will show the error for the 'notelpon' field --}}
             @error('notelpon')
                 <div style="color: red; font-size: 12px; margin-top: 5px;">{{ $message }}</div>
             @enderror
@@ -40,7 +37,6 @@
         <div style="margin-bottom: 20px;">
             <input type="password" placeholder="Password" name="password" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
             <p style="font-size: 10px "class="m-2"> Min. 8 Karakter</p>
-            {{-- This block will show the error for the 'password' field --}}
             @error('password')
                 <div style="color: red; font-size: 12px; margin-top: 5px;">{{ $message }}</div>
             @enderror
