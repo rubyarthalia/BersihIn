@@ -1,3 +1,4 @@
+{{-- alamat --}}
 @extends('base.base')
 
 @section('content')

@@ -1,3 +1,4 @@
+{{-- wishlist --}}
 @extends('base.base')
 
 @section('content')

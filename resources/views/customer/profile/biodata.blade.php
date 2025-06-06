@@ -1,3 +1,4 @@
+{{-- biodata --}}
 @extends('base.base')
 
 @section('content')
