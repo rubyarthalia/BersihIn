@@ -32,9 +32,6 @@ class AuthController extends Controller
         return view('auth.signup');
     }
 
-    /**
-     * Handle the signup request.
-     */
     public function signup_auth(Request $request)
     {
         $request->validate([
@@ -67,8 +64,7 @@ class AuthController extends Controller
         ]);
 
         Auth::guard('customer')->login($customer);
-        session(['role' => 'customer']);
-        session(['user_id' => $customer->id]);
+        $request->session()->regenerate();
 
         return redirect()->route('landing.show');
     }
@@ -79,6 +75,11 @@ class AuthController extends Controller
 
     public function login_auth(Request $request)
     {
+        // ----> ADDED THIS DEFENSIVE LOGIC <----
+        // Force a logout of all guards to ensure a clean slate before attempting a new login.
+        Auth::guard('admin')->logout();
+        Auth::guard('customer')->logout();
+        
         $request->validate([
             'username' => 'required',
             'password' => 'required',
@@ -95,8 +96,7 @@ class AuthController extends Controller
 
         if ($admin && Hash::check($password, $admin->password)) {
             Auth::guard('admin')->login($admin);
-            session(['role' => 'admin']);
-            session(['user_id' => $admin->id]);
+            $request->session()->regenerate();
             return redirect()->route('landing_admin.show');
         }
 
@@ -108,8 +108,7 @@ class AuthController extends Controller
 
         if ($customer && Hash::check($password, $customer->password)) {
             Auth::guard('customer')->login($customer);
-            session(['role' => 'customer']);
-            session(['user_id' => $customer->id]);
+            $request->session()->regenerate();
             return redirect()->route('landing.show');
         }
 
@@ -120,7 +119,9 @@ class AuthController extends Controller
     {
         Auth::guard('admin')->logout();
         Auth::guard('customer')->logout();
-        session()->forget(['role', 'user_id']);
+        
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return redirect()->route('login.show');
     }

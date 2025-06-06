@@ -103,7 +103,7 @@
                             <a class="nav-link mx-lg-3 my-2 my-lg-0" href="{{ route('landing.show') }}"
                                 style="color:#014A3F; font-weight: 700; font-size: clamp(16px, 2vw, 20px);">Beranda</a>
                         </li>
-                        <li class="nav-item"> {{-- Corrected: Added nav-item class --}}
+                        <li class="nav-item">
                             <a class="nav-link mx-lg-3 my-2 my-lg-0" href="{{ route('aboutus.show') }}"
                                 style="color:#014A3F; font-weight: 700; font-size: clamp(16px, 2vw, 20px);">Tentang
                                 Kami</a>

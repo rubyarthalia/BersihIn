@@ -11,7 +11,7 @@
          <!-- Sidebar -->
         <div class="col-12 col-md-4 col-lg-3 mb-4">
     <div id="sidebar" class="p-3" style="position: sticky; overflow-y: auto; background-color: #f5f5f5; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 20px;">
-     <h5 style="color: #014A3F; margin-bottom: 20px;"><strong>Sherin</strong></h5>
+     <h5 style="color: #014A3F; margin-bottom: 20px;"><strong>{{ Auth::guard('customer')->user()->nama ?? 'Customer' }}</strong></h5>
                 <hr style="margin: 0 0 16px 0;">
 
                 <div class="mb-3">

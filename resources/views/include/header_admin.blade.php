@@ -13,7 +13,6 @@
 </head>
 <body>
   @if (Request::is('login_admin') || Request::is('resetpasswordemail_admin') || Request::is('resetpassword_admin'))
-    {{-- Header untuk login/signup/forgot-password/email --}}
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 fixed-top">
       <div class="container d-flex justify-content-center">
         <a class="navbar-brand d-flex align-items-center" href="#">
@@ -59,9 +58,9 @@
             </li>
             <li class="nav-item dropdown my-2 my-lg-0">
               <a class="nav-link mx-lg-3 dropdown-toggle" href="#" id="userDropdown" 
-                 role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                 style="color:#014A3F; font-weight: 700; font-size: clamp(16px, 2vw, 20px);">
-                Amanda
+                role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                style="color:#014A3F; font-weight: 700; font-size: clamp(16px, 2vw, 20px);">
+                {{ Auth::guard('admin')->user()->nama ?? 'Admin' }}
               </a>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                 <li>
@@ -74,11 +73,12 @@
                 </li>
               </ul>
             </li>
+              </ul>
+            </li>
           </ul>
         </div>
       </div>
     </nav>
   @endif
-
 </body>
 </html>
