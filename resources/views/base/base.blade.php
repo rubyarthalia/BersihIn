@@ -13,6 +13,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <title>BersihIn</title>
 </head>
+<style>
+        body {
+            padding-top: 80px; /* Adjust this value based on your header's height */
+        }
+</style>
 <body>
     @include('include.header')
     <div class="container-fluid" style="min-width:100%; margin:0; padding-right:0; padding-left:0;" >
