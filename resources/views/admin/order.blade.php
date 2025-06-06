@@ -1,3 +1,4 @@
+{{-- order --}}
 @extends('base.admin')
 
 @section('content')
@@ -8,25 +9,39 @@
         <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
             <tr style="border-bottom: 1px solid #eee;">
                 <th style="padding: 12px 15px; text-align: left; width: 30%;">Invoice Number</th>
-                <td style="padding: 12px 15px;">INV-20250509-5OVYBU</td>
+                <td style="padding: 12px 15px;">{{ $order->invoice_number ??  $order->id }}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #eee;">
+                <th style="padding: 12px 15px; text-align: left;">Customer</th>
+                <td style="padding: 12px 15px;">{{ $order->customer_id ?? 'Unknown' }}</td>
             </tr>
             <tr style="border-bottom: 1px solid #eee;">
                 <th style="padding: 12px 15px; text-align: left;">Total Price</th>
-                <td style="padding: 12px 15px; font-weight: bold;">Rp 90.000</td>
+                <td style="padding: 12px 15px; font-weight: bold;">Rp {{ number_format($order->harga_total, 0, ',', '.') }}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #eee;">
+                <th style="padding: 12px 15px; text-align: left;">Shipping Fee </th>
+                <td style="padding: 12px 15px; font-weight: bold;">Rp {{ number_format($order->ongkos_kirim, 0, ',', '.') }}</td>
             </tr>
             <tr style="border-bottom: 1px solid #eee;">
                 <th style="padding: 12px 15px; text-align: left;">Status</th>
                 <td style="padding: 12px 15px;">
+                    @if($order->status_pembayaran === 'Paid')
                     <span style="display: inline-block; padding: 4px 8px; background-color: #d4edda; color: #155724; border-radius: 4px; font-size: 14px;">Paid</span>
+                    @elseif($order->status_pembayaran === 'Pending')
+                    <span style="display: inline-block; padding: 4px 8px; background-color: #fff3cd; color: #856404; border-radius: 4px; font-size: 14px;">Pending</span>
+                    @else
+                    <span style="display: inline-block; padding: 4px 8px; background-color: #ffcdcd; color: #850404; border-radius: 4px; font-size: 14px;">{{ $order->status_pembayaran }}</span>
+                    @endif
                 </td>
             </tr>
-            <tr style="border-bottom: 1px solid #eee;">
+            {{-- <tr style="border-bottom: 1px solid #eee;">
                 <th style="padding: 12px 15px; text-align: left;">Payment URL</th>
-                <td style="padding: 12px 15px;">-</td>
-            </tr>
+                <td style="padding: 12px 15px;">{{ $order->payment_url ?? '-' }}</td>
+            </tr> --}}
             <tr>
                 <th style="padding: 12px 15px; text-align: left;">Order Date</th>
-                <td style="padding: 12px 15px;">09 May 2025 01:59</td>
+                <td style="padding: 12px 15px;">{{ $order->created_at->format('d M Y H:i') }}</td>
             </tr>
         </table>
 
@@ -45,14 +60,16 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach ($order->orderServices as $index => $item)
                     <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 12px 15px;">1</td>
-                        <td style="padding: 12px 15px;">Cuci AC</td>
-                        <td style="padding: 12px 15px;">1</td>
-                        <td style="padding: 12px 15px;">Jam</td>
-                        <td style="padding: 12px 15px; text-align: right;">Rp 90.000</td>
-                        <td style="padding: 12px 15px; text-align: right; font-weight: bold;">Rp 90.000</td>
+                        <td style="padding: 12px 15px;">{{ $index + 1 }}</td>
+                        <td style="padding: 12px 15px;">{{ $item->service->nama ?? $item->nama_produk ?? 'Produk Tidak Diketahui' }}</td>
+                        <td style="padding: 12px 15px;">{{ $item->jumlah }}</td>
+                        <td style="padding: 12px 15px;">{{ $item->service->satuan }}</td>
+                        <td style="padding: 12px 15px; text-align: right;">Rp {{ number_format($item->service->harga, 0, ',', '.') }}</td>
+                        <td style="padding: 12px 15px; text-align: right; font-weight: bold;">Rp {{ number_format($item->sub_total, 0, ',', '.') }}</td>
                     </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

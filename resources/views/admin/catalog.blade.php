@@ -1,3 +1,4 @@
+{{-- catalog --}}
 @extends('base.admin')
 
 @section('content')
@@ -5,8 +6,9 @@
 
     <div class="container text-left" style="padding-top: 50px">
         <h1 class="display-4 fw-bold" style="color:black;">{{ strtoupper($category->nama) }}</h1>
-        <a href="{{ route('addservices.show') }}" class="btn py-2 px-4" style="margin-top:5px; background-color: #FFC400; color: white; border-radius: 5px; font-size: 14px; font-weight: bold; text-decoration: none;">
-            + Tambah Layanan
+        <a href="{{ route('addservices.show', ['kategori' => strtolower($category->nama), 'category_id' => $category->id]) }}"
+        class="btn py-2 px-4" style="margin-top:5px; background-color: #FFC400; color: white; border-radius: 5px; font-size: 14px; font-weight: bold; text-decoration: none;">
+        + Tambah Layanan
         </a>
     </div>
     
@@ -32,13 +34,22 @@
                         </p>
                     </div>
                     <div class="d-flex justify-content-between mt-auto">
-                        <a href="#" 
-                            onclick="alert('Layanan berhasil dihapus.')" 
-                            class="btn py-2 px-4" 
-                            style="background-color: #40744E; color: white; border-radius: 5px; font-size: 14px; font-weight: bold; text-decoration: none;">
-                            Hapus
+                        @if($service->status_del == 0)
+                            <a href="{{ route('service_admin.delete', ['service_id' => $service->id]) }}" 
+                                onclick="return confirm('Yakin ingin menghapus layanan ini?')" 
+                                class="btn py-2 px-4" 
+                                style="background-color: #40744E; color: white; border-radius: 5px; font-size: 14px; font-weight: bold; text-decoration: none;">
+                                Hapus
                             </a>
-                        <a href="{{ route('editservices.show',$service->id) }}" class="btn py-2 px-4" style="background-color: red; color: white; border-radius: 5px; font-size: 14px; font-weight: bold; text-decoration: none;">
+                        @else
+                            <a href="{{ route('service_admin.restore', ['service_id' => $service->id]) }}" 
+                                onclick="return confirm('Ingin memulihkan layanan ini?')" 
+                                class="btn py-2 px-3" 
+                                style="background-color: #1E88E5; color: white; border-radius: 5px; font-size: 14px; font-weight: bold; text-decoration: none;">
+                                Kembalikan
+                            </a>
+                        @endif
+                        <a href="{{ route('editservices.show', $service->id) }}" class="btn py-2 px-4" style="background-color: red; color: white; border-radius: 5px; font-size: 14px; font-weight: bold; text-decoration: none;">
                             Edit
                         </a>
                     </div>
