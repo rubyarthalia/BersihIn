@@ -1,15 +1,9 @@
-{{-- Remove this part --}}
-{{-- @php
-    $logged_in = session('logged_in', false);
-@endphp --}}
 
-{{-- And modify the conditional structure like this: --}}
 @if (Request::is('login') ||
         Request::is('resetpasswordemail') ||
         Request::is('resetpassword') ||
         Request::is('signup') ||
         Request::is('logout'))
-    {{-- Header for auth pages (login, signup, etc.) --}}
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 fixed-top">
         <div class="container d-flex justify-content-center">
             <a class="navbar-brand d-flex align-items-center" href="#">
@@ -18,9 +12,7 @@
         </div>
     </nav>
 @else
-    {{-- Headers for other pages --}}
     @if (Auth::guard('customer')->check())
-        {{-- ============== HEADER CUSTOMER AFTER LOGIN ============== --}}
         <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 fixed-top"
             style="font-family: 'Montserrat', sans-serif;">
             <div class="container">
@@ -91,13 +83,8 @@
             </div>
         </nav>
     @elseif (Auth::guard('admin')->check())
-        {{-- ============== HEADER ADMIN AFTER LOGIN ============== --}}
-        {{-- This part assumes admin might use the same 'base.base' layout. --}}
-        {{-- If admin exclusively uses 'base.admin' which includes 'header_admin.blade.php', this specific 'elseif' might be redundant here. --}}
-        {{-- For demonstration, if admin shared this header: --}}
-        @include('include.header_admin') {{-- Or include admin specific links directly --}}
+        @include('include.header_admin')
     @else
-        {{-- ============== HEADER CUSTOMER BEFORE LOGIN ============== --}}
         <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 fixed-top"
             style="font-family: 'Montserrat', sans-serif;">
             <div class="container">
