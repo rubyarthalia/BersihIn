@@ -14,6 +14,18 @@ class AuthController extends Controller
     {
         return view('auth.login');
     }
+    public function password_show()
+    {
+        return view('auth.password');
+    }
+    public function passwordemail_show()
+    {
+        return view('auth.email');
+    }
+    public function passwordemail_auth(Request $request)
+    {
+        return redirect()->route('password.show');
+    }
 
     public function login_auth(Request $request)
     {
