@@ -1,7 +1,7 @@
 @extends('base.base')
 
 @section('content')
-<section class="login-section" style="font-family: 'Montserrat', sans-serif; background-color: #f9fdf8; min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 20px;">  
+<section class="login-section" style="font-family: 'Montserrat', sans-serif; background-color: #f9fdf8; min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 20px;">
   <div class="login-container" style="background-color: #ffffff; border-radius: 10px; padding: 40px; width: 100%; max-width: 400px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
 
     <h2 style="font-weight: 700; font-size: 28px; margin-bottom: 25px; color: #014A3F; text-align: center;">Masuk</h2>

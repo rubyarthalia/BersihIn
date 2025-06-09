@@ -74,24 +74,20 @@
                 <form>
                     <div class="mb-3">
                         <label for="nama" class="form-label">Nama</label>
-                        <input type="text" class="form-control" id="nama" placeholder="Nama Anda" value="">
+                        <input type="text" class="form-control" id="nama" value="{{ Auth::guard('customer')->user()->nama }}" readonly>
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email Aktif</label>
-                        <input type="email" class="form-control" id="email" placeholder="example@example.com" value="">
+                        <input type="email" class="form-control" id="email" value="{{ Auth::guard('customer')->user()->email }}" readonly>
                     </div>
                     <div class="mb-3">
                         <label for="phone" class="form-label">Nomor Handphone</label>
-                        <input type="text" class="form-control" id="phone" placeholder="0123456789" value="">
-                    </div>
-                    <div class="mb-3">
-                        <label for="foto" class="form-label">Gambar Profil</label>
-                        <input class="form-control" type="file" id="foto">
+                        <input type="text" class="form-control" id="phone" value="{{ Auth::guard('customer')->user()->nomor_telepon }}" readonly>
                     </div>
                 </form>
-                <button style="background-color: #014A3F; color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer;">
+                {{-- <button style="background-color: #014A3F; color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer;">
                     Simpan
-                </button>
+                </button> --}}
             </div>
         </div>
     </div>

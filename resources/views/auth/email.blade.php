@@ -9,8 +9,15 @@
         <form action="{{ route('password_email.auth') }}" method="post" style="margin-bottom: 20px;">
             @csrf
             <div style="margin-bottom: 15px;">
-                <input type="text" placeholder="Nomor Telepon / Email" name="username" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+                <input type="text" placeholder="Nomor Telepon / Email" name="username" value="{{ old('username') }}" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+                
+                @if ($errors->has('username'))
+                    <div style="color: red; font-size: 13px; margin-top: 5px;">
+                        {{ $errors->first('username') }}
+                    </div>
+                @endif
             </div>
+
 
             <button type="submit" style="width: 100%; padding: 12px; background-color: #34A853; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer;">Berikutnya</button>
         </form>

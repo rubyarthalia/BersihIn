@@ -12,10 +12,11 @@ class Service extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     protected $fillable = [
+    'id',
     'nama',
     'harga',
     'satuan',
-    'kategori_id',
+    'category_id',
     'kalimat_promosi',
     'deskripsi',
     'gambar'

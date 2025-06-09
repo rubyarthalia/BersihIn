@@ -9,7 +9,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'customer', // Let's default to customer, can also be 'web'
+        'guard' => 'web', // Let's default to customer, can also be 'web'
         'passwords' => 'users',
     ],
 
@@ -40,7 +40,7 @@ return [
     /*
     |--------------------------------------------------------------------------
     | User Providers
-    |--------------------------------------------------------------------------
+    |-------------------------------------------------------------------------
     */
 
     'providers' => [

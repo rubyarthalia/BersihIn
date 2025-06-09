@@ -21,4 +21,8 @@ class OrderService extends Model
     {
         return $this->belongsTo(Service::class, 'service_id', 'id');
     }
+    public function cleaner()
+    {
+        return $this->belongsTo(Cleaner::class, 'cleaner_id');
+    }
 }

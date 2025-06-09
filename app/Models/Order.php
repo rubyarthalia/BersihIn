@@ -23,5 +23,10 @@ class Order extends Model
     {
         return $this->hasMany(OrderService::class, 'order_id', 'id');
     }
+    public function ulasan()
+    {
+        return $this->hasOne(Ulasan::class, 'order_id', 'id');
+    }
+
 
 }

@@ -74,67 +74,34 @@
                     <button class="btn text-white" style="background-color: #014A3F;" data-bs-toggle="modal" data-bs-target="#alamatModal">
                         + Tambahkan Alamat
                     </button>
-
-                    <div class="position-relative w-100" style="max-width: 400px;">
-                        <input type="text" class="form-control ps-5" placeholder="Nama Jalan/Kota/Provinsi">
-                        <img src="{{ asset('images/search.png') }}" style="width: 16px; position: absolute; left: 15px; top: 50%; transform: translateY(-50%);">
-                    </div>
                 </div>
 
                 <strong style="color: #014A3F;">Alamat Saya</strong>
 
-                {{-- kalau belum ada alamat --}}
-                {{-- <div class="text-center py-5">
-                    <p style="color: #777;">Tidak ada alamat</p>
-                </div> --}}
-
-                <!-- Address Card 1 -->
-                <div id="address-1" class="address-card mt-3 p-3" style="border: 1px solid #dee2e6; background-color: rgba(160, 188, 148, 0.5) ;border-radius: 8px; border-color:#2e7d32 ;margin-bottom: 20px; transition: all 0.3s ease;">
+                @forelse ($addresses as $address)
+                <div class="address-card mt-3 p-3" style="border: 1px solid #dee2e6; background-color: rgba(160, 188, 148, 0.5) ;border-radius: 8px; border-color:#2e7d32 ;margin-bottom: 20px; transition: all 0.3s ease;">
                     <div class="d-flex justify-content-between">
                         <div>
                             <div class="d-flex align-items-center mb-2">
-                                <h6 style="color: #014A3F; margin: 0;"><strong>Rumah</strong></h6>
+                                <h6 style="color: #014A3F; margin: 0;"><strong>{{ $address->status }}</strong></h6>
                             </div>
-                            <p class="mb-1"><strong>SHERIN YONATAN</strong></p>
-                            <p class="mb-1">089543221905</p>
-                            <p class="mb-0">Waterfront WP 1 No. 8 Nord Kost, Made, Sambikerep, 60219</p>
+                            <p class="mb-0">{{ $address->alamat }}</p>
+                            <small class="text-muted">{{ $address->subdistrict->nama ?? '' }}</small>
                         </div>
                         <div style="display: flex; flex-direction: column; align-items: flex-end;">
                             <div class="d-flex align-items-center gap-2 mb-2">
-                                <button class="btn btn-sm btn-outline-secondary p-1" onclick="togglePrimary('address-1', this)" style="width: 32px; height: 32px;">
-                                    <img src="{{ asset('images/unpin.png') }}" style="width: 16px; height: 16px;" id="pin-icon-1">
-                                </button>
-                                <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#editAlamatModal">
+                                <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#editAlamatModal" data-id="{{ $address->id }}"data-label="{{ $address->status }}"
+                                    data-alamat="{{ $address->alamat }}"
+                                    data-subdistrict="{{ $address->subdistrict_id }}" data-status_del="{{ $address->status_del }}">
                                     <i class="bi bi-pencil-fill"></i> Ubah
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Address Card 2 -->
-                <div id="address-1" class="address-card mt-3 p-3" style="border: 1px solid #dee2e6; border-radius: 8px; margin-bottom: 20px; transition: all 0.3s ease;">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <div class="d-flex align-items-center mb-2">
-                                <h6 style="color: #014A3F; margin: 0;"><strong>Rumah</strong></h6>
-                            </div>
-                            <p class="mb-1"><strong>RUBY ARTHALIA</strong></p>
-                            <p class="mb-1">0814445326</p>
-                            <p class="mb-0">Waterfront WP 1 No. 1 Sambikerep, 60219</p>
-                        </div>
-                        <div style="display: flex; flex-direction: column; align-items: flex-end;">
-                            <div class="d-flex align-items-center gap-2 mb-2">
-                                <button class="btn btn-sm btn-outline-secondary p-1" onclick="togglePrimary('address-1', this)" style="width: 32px; height: 32px;">
-                                    <img src="{{ asset('images/maupin.png') }}" style="width: 16px; height: 16px;" id="pin-icon-1">
-                                </button>
-                                <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#editAlamatModal">
-                                    <i class="bi bi-pencil-fill"></i> Ubah
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @empty
+                <p class="text-muted mt-3">Belum ada alamat yang ditambahkan.</p>
+                @endforelse
             </div>
         </div>
     </div>
@@ -143,7 +110,7 @@
 <!-- Modal Tambah Alamat -->
 <div class="modal fade" id="alamatModal" tabindex="-1" aria-labelledby="alamatModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <form method="POST" action="">
+    <form method="POST" action="{{ route('alamat.store') }}">
         @csrf
         <div class="modal-content">
             <div class="modal-header">
@@ -151,14 +118,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="mb-3">
-                    <label class="form-label">Nama Penerima</label>
-                    <input type="text" name="nama_penerima" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Nomor Telepon</label>
-                    <input type="text" name="nomor_hp" class="form-control" required>
-                </div>
                 <div class="mb-3">
                     <label class="form-label">Label Alamat</label>
                     <select name="label_alamat" class="form-select" required>
@@ -173,22 +132,12 @@
                     <textarea name="alamat_lengkap" class="form-control" rows="3" required></textarea>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Kota</label>
-                    <input type="text" name="kota" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Provinsi</label>
-                    <input type="text" name="provinsi" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Kode Pos</label>
-                    <input type="text" name="kode_pos" class="form-control" required>
-                </div>
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" value="1" id="pin_alamat" name="pin_alamat">
-                    <label class="form-check-label" for="pin_alamat">
-                        Jadikan alamat utama
-                    </label>
+                    <label class="form-label">Kecamatan</label>
+                    <select name="subdistrict_id" class="form-select" required>
+                        @foreach ($subdistricts as $subdistrict)
+                            <option value="{{ $subdistrict->id }}">{{ $subdistrict->nama }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
             <div class="modal-footer">
@@ -203,7 +152,7 @@
 <!-- Edit Address Modal -->
 <div class="modal fade" id="editAlamatModal" tabindex="-1" aria-labelledby="editAlamatModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <form method="POST" action="">
+    <form method="POST" id="editAlamatForm">
         @csrf
         @method('PUT')
         <div class="modal-content">
@@ -213,14 +162,6 @@
 
             </div>
             <div class="modal-body">
-                <div class="mb-3">
-                    <label class="form-label">Nama Penerima</label>
-                    <input type="text" name="nama_penerima" class="form-control" value="SHERIN YONATAN" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Nomor Telepon</label>
-                    <input type="text" name="nomor_hp" class="form-control" value="089543221905" required>
-                </div>
                 <div class="mb-3">
                     <label class="form-label">Label Alamat</label>
                     <select name="label_alamat" class="form-select" required>
@@ -235,33 +176,30 @@
                     <textarea name="alamat_lengkap" class="form-control" rows="3" required>Waterfront WP 1 No. 8 Nord Kost, Made, Sambikerep, 60219</textarea>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Kota</label>
-                    <input type="text" name="kota" class="form-control" value="Sambikerep" required>
+                    <label class="form-label">Kecamatan</label>
+                    <select name="subdistrict_id" class="form-select" required>
+                        @foreach ($subdistricts as $subdistrict)
+                        <option value="{{ $subdistrict->id }}">{{ $subdistrict->nama }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Provinsi</label>
-                    <input type="text" name="provinsi" class="form-control" value="Jawa Timur" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Kode Pos</label>
-                    <input type="text" name="kode_pos" class="form-control" value="60219" required>
-                </div>
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" value="1" id="edit_pin_alamat" name="pin_alamat">
-                    <label class="form-check-label" for="edit_pin_alamat">
-                        Jadikan alamat utama
-                    </label>
+                    <label class="form-label">Status Alamat</label>
+                    <select name="status_del" class="form-select" required>
+                        <option value="0" selected>Tidak Hapus</option>
+                        <option value="1">Hapus</option>
+                    </select>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-success" onclick="simpanPerubahan()">Simpan Perubahan</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-danger ms-auto" onclick="confirmDelete()">Hapus Alamat</button>
+                <button type="submit" class="btn btn-success" onclick="simpanPerubahan()">Simpan Perubahan</button>
             </div>
         </div>
     </form>
   </div>
 </div>
+
 
 <script>
 function confirmLogout(event) {
@@ -278,21 +216,27 @@ function simpanPerubahan() {
         $('#editAlamatModal').modal('update');
     }
 }
+document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('editAlamatModal');
+    modal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
 
-function confirmDelete() {
-    if (confirm('Apakah Anda yakin ingin menghapus alamat ini?')) {
-        alert('Alamat berhasil dihapus');
-        $('#editAlamatModal').modal('hide');
-    }
-}
+        const id = button.getAttribute('data-id');
+        const label = button.getAttribute('data-label');
+        const alamat = button.getAttribute('data-alamat');
+        const subdistrict = button.getAttribute('data-subdistrict');
+        const statusDel = button.getAttribute('data-status_del');
 
-function toggleSection(sectionId) {
-    const section = document.getElementById(sectionId + 'Section');
-    if (section.style.display === 'none') {
-        section.style.display = 'block';
-    } else {
-        section.style.display = 'none';
-    }
-}
+        // Set form action
+        const form = document.getElementById('editAlamatForm');
+        form.action = `/alamat/${id}`;
+
+        // Set input values
+        form.querySelector('select[name="label_alamat"]').value = label;
+        form.querySelector('textarea[name="alamat_lengkap"]').value = alamat;
+        form.querySelector('select[name="subdistrict_id"]').value = subdistrict;
+        form.querySelector('select[name="status_del"]').value = statusDel
+    });
+});
 </script>
 @endsection

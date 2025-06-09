@@ -8,10 +8,9 @@
 
 <div class="container mt-5 mb-5" style="font-family: 'Montserrat', sans-serif;">
     <div class="row">
-        <!-- Sidebar -->
         <div class="col-12 col-md-4 col-lg-3 mb-4">
-    <div id="sidebar" class="p-3" style="position: sticky; overflow-y: auto; background-color: #f5f5f5; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 20px;">
-     <h5 style="color: #014A3F; margin-bottom: 20px;"><strong>{{ Auth::guard('customer')->user()->nama ?? 'Customer' }}</strong></h5>
+            <div id="sidebar" class="p-3" style="position: sticky; top: 20px; overflow-y: auto; background-color: #f5f5f5; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 20px;">
+                <h5 style="color: #014A3F; margin-bottom: 20px;"><strong>{{ Auth::guard('customer')->user()->nama ?? 'Customer' }}</strong></h5>
                 <hr style="margin: 0 0 16px 0;">
 
                 <div class="mb-3">
@@ -36,7 +35,7 @@
                     <div class="d-flex justify-content-between align-items-center" style="cursor: pointer;">
                         <strong style="color: #014A3F;">Aktivitas Saya</strong>
                     </div>
-                   <ul id="aktivitasSection" class="list-unstyled mt-3 mb-0">
+                    <ul id="aktivitasSection" class="list-unstyled mt-3 mb-0">
                         <li class="mb-3">
                             <img src="{{ asset('Images/profileheart.png') }}" alt="Wishlist" style="width: 24px; height: 24px; margin-right: 5px;">
                             <a href="{{ route('wishlist.show') }}" style="color: #014A3F; text-decoration: none;">Wishlist</a>
@@ -61,7 +60,6 @@
             </div>
         </div>
 
-        <!-- Transaction Content -->
         <div class="col-12 col-md-8 col-lg-9">
             <div class="bg-white p-4 rounded shadow-sm">
                 <div class="d-flex align-items-center mb-3">
@@ -69,135 +67,113 @@
                     <h4 class="text-success mb-0">Transaksi</h4>
                 </div>
                 <hr>
-
-                <!-- Filter Section -->
-                <div class="row mb-4">
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label text-muted">Status</label>
-                        <select class="form-select" id="statusFilter">
-                            <option value="semua">Semua Status</option>
-                            <option value="menunggu">Menunggu Pembayaran</option>
-                            <option value="diproses">Diproses</option>
-                            <option value="selesai">Selesai</option>
-                            <option value="dibatalkan">Dibatalkan</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label text-muted">Tanggal</label>
-                        <select class="form-select" id="dateFilter">
-                            <option value="semua">Semua Tanggal</option>
-                            <option value="hari-ini">Hari Ini</option>
-                            <option value="minggu-ini">Minggu Ini</option>
-                            <option value="bulan-ini">Bulan Ini</option>
-                            <option value="custom">Custom</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6 mb-2" id="customDateRange" style="display: none;">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label class="form-label text-muted">Dari</label>
-                                <input type="date" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label text-muted">Sampai</label>
-                                <input type="date" class="form-control">
-                            </div>
+                   <form method="GET" action="{{ route('transaksi.show') }}">
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select id="status" name="status" class="form-select" onchange="this.form.submit()">
+                                <option value="semua" {{ ($statusFilter ?? 'semua') == 'semua' ? 'selected' : '' }}>Semua Status</option>
+                                <option value="Belum Dilaksanakan" {{ ($statusFilter ?? '') == 'Belum Dilaksanakan' ? 'selected' : '' }}>Belum Dilaksanakan</option>
+                                <option value="Selesai" {{ ($statusFilter ?? '') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="date" class="form-label">Tanggal</label>
+                            <select id="date" name="date" class="form-select" onchange="this.form.submit()">
+                                <option value="semua" {{ ($dateFilter ?? 'semua') == 'semua' ? 'selected' : '' }}>Semua Tanggal</option>
+                                <option value="hari-ini" {{ ($dateFilter ?? '') == 'hari-ini' ? 'selected' : '' }}>Hari Ini</option>
+                                <option value="minggu-ini" {{ ($dateFilter ?? '') == 'minggu-ini' ? 'selected' : '' }}>Minggu Ini</option>
+                                <option value="bulan-ini" {{ ($dateFilter ?? '') == 'bulan-ini' ? 'selected' : '' }}>Bulan Ini</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label text-muted">Cari Transaksi</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="No. Transaksi/Nama Layanan">
-                            <button class="btn btn-success" type="button">
-                                <i class="bi bi-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                </form>
+                    <style>
+                        body, select, label {
+                            font-family: 'Montserrat', sans-serif;
+                        }
+                        .form-select {
+                            border-radius: 0.5rem;
+                            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+                            transition: box-shadow 0.3s ease;
+                        }
+                        .form-select:focus {
+                            box-shadow: 0 0 8px #014A3F;
+                            border-color: #014A3F;
+                            outline: none;
+                        }
+                        label.form-label {
+                            font-weight: 600;
+                            font-size: 0.9rem;
+                            color: #014A3F;
+                        }
+                        .form-select {
+                        border: 1px solid #014A3F;
+                        color: #014A3F; 
+                        font-weight: 600;
+                        background-color: #f9f9f9;
+                        transition: box-shadow 0.3s ease, border-color 0.3s ease;
+                    }
 
-                <!-- Transaction List -->
+                    .form-select:focus {
+                        border-color: #014A3F;
+                        box-shadow: 0 0 8px #014A3F;
+                        outline: none;
+                    }
+                    </style>
+
+                
                 <div class="transaction-list">
-                    <!-- Transaction Item 1 -->
-                    <div class="card mb-3 transaction-item" data-status="selesai">
+                    @forelse($orders as $order)
+                    <div class="card mb-3 transaction-item" data-status="{{ $order->status_layanan }}" data-date="{{ \Carbon\Carbon::parse($order->tanggal_jadwal)->format('Y-m-d') }}">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <h6 class="mb-1" style="color: #014A3F;"><strong>TRX-20230510-001</strong></h6>
-                                    <p class="mb-1">Setrika Pakaian - 2 Jam</p>
-                                    <p class="mb-1 text-muted">10 Mei 2025 • 14:30 WIB</p>
-                                    <span class="badge bg-success">Selesai</span>
-                                </div>
-                                <div class="text-end">
-                                    <h5 class="mb-2">Rp100.000</h5>
-                                    <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#detailTransaksiModal">
-                                        <i class="bi bi-eye-fill"></i> Detail
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                                    <h5 class="mb-1" style="color: #014A3F;">
+                                        <strong>{{ $order->id }}</strong>
+                                    </h5>
+                                    <p class="mb-1 text-muted">{{ \Carbon\Carbon::parse($order->tanggal_jadwal)->format('d M Y • H:i') }} WIB</p>
 
-                    <!-- Transaction Item 2 -->
-                    <div class="card mb-3 transaction-item" data-status="diproses">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h6 class="mb-1" style="color: #014A3F;"><strong>TRX-20230512-002</strong></h6>
-                                    <p class="mb-1">Cuci Sofa - 1 Unit</p>
-                                    <p class="mb-1 text-muted">12 Mei 2025 • 10:15 WIB</p>
-                                    <span class="badge bg-warning text-dark">Diproses</span>
-                                </div>
-                                <div class="text-end">
-                                    <h5 class="mb-2">Rp150.000</h5>
-                                    <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#detailTransaksiModal">
-                                        <i class="bi bi-eye-fill"></i> Detail
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                                    @php
+                                        $status = $order->status_layanan;
+                                        $badgeClass = '';
+                                        if($status == 'Selesai') $badgeClass = 'bg-success';
+                                        elseif($status == 'Belum Dilaksanakan') $badgeClass = 'bg-secondary';
+                                    @endphp
 
-                    <!-- Transaction Item 3 -->
-                    <div class="card mb-3 transaction-item" data-status="menunggu">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h6 class="mb-1" style="color: #014A3F;"><strong>TRX-20230515-003</strong></h6>
-                                    <p class="mb-1">Pembersihan Kolam Renang - 10m²</p>
-                                    <p class="mb-1 text-muted">15 Mei 2025 • 08:00 WIB</p>
-                                    <span class="badge bg-secondary">Menunggu Pembayaran</span>
+                                    <span class="badge {{ $badgeClass }}">{{ $status }}</span>
                                 </div>
                                 <div class="text-end">
-                                    <h5 class="mb-2">Rp200.000</h5>
-                                    <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#detailTransaksiModal">
+                                    <h5 class="mb-2">Rp{{ number_format($order->harga_total, 0, ',', '.') }}</h5>
+                                    {{-- Tombol ini sekarang memiliki data-order-id yang akan digunakan oleh JavaScript --}}
+                                    <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#detailTransaksiModal" data-order-id="{{ $order->id }}">
                                         <i class="bi bi-eye-fill"></i> Detail
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    @empty
+                    <div class="text-center p-5">
+                        <p class="text-muted">Anda belum memiliki riwayat transaksi.</p>
+                    </div>
+                    @endforelse
                 </div>
 
-                <!-- Pagination -->
-                <nav aria-label="Transaction pagination" class="mt-4">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1">Previous</a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Next</a>
-                        </li>
-                    </ul>
+                <nav aria-label="Transaction pagination" class="d-flex justify-content-center mt-4">
+                    {{ $orders->links() }}
                 </nav>
+                <style>
+                .pagination .page-link { color: #40744E; border: 1px solid #40744E; }
+                .pagination .page-item.active .page-link { background-color: #40744E; border-color: #40744E; color: white; }
+                .pagination .page-link:hover { background-color: #40744E; color: white; border-color: #40744E; }
+                </style>
+                
             </div>
         </div>
     </div>
 </div>
 
-<!-- Transaction Detail Modal -->
 <div class="modal fade" id="detailTransaksiModal" tabindex="-1" aria-labelledby="detailTransaksiModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -206,89 +182,66 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <h6 class="mb-3" style="color: #014A3F;"><strong>Informasi Transaksi</strong></h6>
-                        <table class="table table-sm">
-                            <tr>
-                                <td width="40%">No. Transaksi</td>
-                                <td><strong>TRX-20230510-001</strong></td>
-                            </tr>
-                            <tr>
-                                <td>Tanggal</td>
-                                <td>10 Mei 2025, 14:30 WIB</td>
-                            </tr>
-                            <tr>
-                                <td>Status</td>
-                                <td><span class="badge bg-success">Selesai</span></td>
-                            </tr>
-                            <tr>
-                                <td>Metode Pembayaran</td>
-                                <td>Transfer Bank (BCA)</td>
-                            </tr>
-                        </table>
+                {{-- <div id="modal-loading" class="text-center">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
-                    <div class="col-md-6">
-                        <h6 class="mb-3" style="color: #014A3F;"><strong>Informasi Pelanggan</strong></h6>
-                        <table class="table table-sm">
-                            <tr>
-                                <td width="40%">Nama</td>
-                                <td><strong>Sherin Yonatan</strong></td>
-                            </tr>
-                            <tr>
-                                <td>No. HP</td>
-                                <td>089543221905</td>
-                            </tr>
-                            <tr>
-                                <td>Alamat</td>
-                                <td>Waterfront WP 1 No. 8, Sambikerep</td>
-                            </tr>
-                        </table>
+                </div> --}}
+
+                <div id="modal-content-wrapper" style="display: none;">
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <h6 class="mb-3" style="color: #014A3F;"><strong>Informasi Transaksi</strong></h6>
+                            <table class="table table-sm table-borderless">
+                                <tr>
+                                    <td width="40%">No. Transaksi</td>
+                                    <td><strong id="modal-order-id"></strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Tanggal</td>
+                                    <td id="modal-order-date"></td>
+                                </tr>
+                                <tr>
+                                    <td>Status</td>
+                                    <td><span id="modal-order-status" class="badge"></span></td>
+                                </tr>
+                                <tr>
+                                    <td>Metode Pembayaran</td>
+                                    <td id="modal-payment-method"></td>
+                                </tr>
+                                {{-- <tr>
+                                    <td>Cleaner</td>
+                                    <td id="modal-cleaner-name"></td>
+                                </tr> --}}
+                            </table>
+                        </div>
                     </div>
-                </div>
 
-                <h6 class="mb-3" style="color: #014A3F;"><strong>Detail Pesanan</strong></h6>
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead style="background-color: #f5f5f5;">
-                            <tr>
-                                <th>Layanan</th>
-                                <th>Jumlah</th>
-                                <th>Harga</th>
-                                <th>Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Setrika Pakaian</td>
-                                <td>2 Jam</td>
-                                <td>Rp50.000/Jam</td>
-                                <td>Rp100.000</td>
-                            </tr>
-                            <tr>
-                                <td>Jasa Transportasi</td>
-                                <td>1</td>
-                                <td>Rp15.000</td>
-                                <td>Rp15.000</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" class="text-end"><strong>Total</strong></td>
-                                <td><strong>Rp115.000</strong></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="mt-4">
-                    <h6 class="mb-3" style="color: #014A3F;"><strong>Bukti Pembayaran</strong></h6>
-                    <div class="border p-2 text-center" style="max-width: 100px;">
-                        <button class="btn btn-sm btn-success">Download</button>
+                    <h6 class="mb-3" style="color: #014A3F;"><strong>Detail Pesanan</strong></h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead style="background-color: #f5f5f5;">
+                                <tr>
+                                    <th>Layanan</th>
+                                    <th>Jumlah</th>
+                                    <th>Harga</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modal-order-items">
+                                </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total</strong></td>
+                                    <td><strong id="modal-total-price"></strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-success">Cetak Invoice</button>
             </div>
         </div>
     </div>
@@ -302,40 +255,91 @@ function confirmLogout(event) {
     }
 }
 
-// Filter functionality
-document.getElementById('dateFilter').addEventListener('change', function() {
-    const customDateRange = document.getElementById('customDateRange');
-    if (this.value === 'custom') {
-        customDateRange.style.display = 'block';
-    } else {
-        customDateRange.style.display = 'none';
+function toggleSection(sectionId) {
+    const section = document.getElementById(sectionId + 'Section');
+    if (section) {
+        const isClosed = section.style.display === 'none' || section.style.display === '';
+        section.style.display = isClosed ? 'block' : 'none';
     }
-    filterTransactions();
-});
-
-document.getElementById('statusFilter').addEventListener('change', filterTransactions);
-
-function filterTransactions() {
-    const statusFilter = document.getElementById('statusFilter').value;
-    const dateFilter = document.getElementById('dateFilter').value;
-
-    document.querySelectorAll('.transaction-item').forEach(item => {
-        const itemStatus = item.getAttribute('data-status');
-        let shouldShow = true;
-
-        // Apply status filter
-        if (statusFilter !== 'semua' && itemStatus !== statusFilter) {
-            shouldShow = false;
-        }
-
-        // Apply date filter (simplified for demo)
-        // In real app, you would compare dates
-
-        item.style.display = shouldShow ? 'block' : 'none';
-    });
 }
 
-filterTransactions();
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const detailModal = document.getElementById('detailTransaksiModal');
+
+    detailModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const orderId = button.getAttribute('data-order-id');
+
+        const modalTitle = detailModal.querySelector('.modal-title');
+        const modalContent = document.getElementById('modal-content-wrapper');
+
+        modalTitle.textContent = 'Memuat Detail Transaksi...';
+        modalContent.style.display = 'none';
+        document.getElementById('modal-order-items').innerHTML = '';
+
+        fetch(`/transaksi/detail/${orderId}`)
+            .then(response => {
+                if (!response.ok) { throw new Error('Gagal mengambil data'); }
+                return response.json();
+            })
+            .then(data => {
+                modalContent.style.display = 'block';
+                modalTitle.textContent = 'Detail Transaksi ' + data.id;
+
+                document.getElementById('modal-order-id').textContent = data.id;
+                document.getElementById('modal-order-date').textContent = new Date(data.tanggal_jadwal).toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' }) + ' WIB';
+                document.getElementById('modal-payment-method').textContent = data.metode_pembayaran || 'N/A';
+
+                const statusBadge = document.getElementById('modal-order-status');
+                statusBadge.textContent = data.status_layanan;
+                statusBadge.className = 'badge';
+                if (data.status_layanan === 'Selesai') statusBadge.classList.add('bg-success');
+                else if (data.status_layanan === 'Dalam Proses') statusBadge.classList.add('bg-warning', 'text-dark');
+                else if (data.status_layanan === 'Belum Dilaksanakan') statusBadge.classList.add('bg-secondary');
+                else if (data.status_layanan === 'Batal') statusBadge.classList.add('bg-danger');
+                else statusBadge.classList.add('bg-info');
+
+                const itemsTbody = document.getElementById('modal-order-items');
+                let itemsHtml = '';
+                if (data.items && data.items.length > 0) {
+                    data.items.forEach(item => {
+                        const serviceName = item.service ? item.service.nama : 'Layanan Dihapus';
+                        const subtotal = item.harga * item.jumlah;
+                        itemsHtml += `
+                            <tr>
+                                <td>${serviceName}</td>
+                                <td>${item.jumlah} ${item.service ? (item.service.satuan || '') : ''}</td>
+                                <td>Rp${Number(item.harga).toLocaleString('id-ID')}</td>
+                                <td>Rp${Number(subtotal).toLocaleString('id-ID')}</td>
+                            </tr>
+                        `;
+                    });
+                }
+                if (data.biaya_transportasi > 0) {
+                    itemsHtml += `
+                        <tr>
+                            <td>Jasa Transportasi</td>
+                            <td>1</td>
+                            <td>Rp${Number(data.biaya_transportasi).toLocaleString('id-ID')}</td>
+                            <td>Rp${Number(data.biaya_transportasi).toLocaleString('id-ID')}</td>
+                        </tr>
+                    `;
+                }
+                itemsTbody.innerHTML = itemsHtml;
+
+                document.getElementById('modal-total-price').textContent = 'Rp' + Number(data.harga_total).toLocaleString('id-ID');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                modalTitle.textContent = 'Gagal Memuat Data';
+                modalContent.innerHTML = '<p class="text-center text-danger">Terjadi kesalahan saat mengambil data. Silakan coba lagi.</p>';
+                modalContent.style.display = 'block';
+            });
+    });
+});
+
 </script>
 
 @endsection

@@ -3,6 +3,7 @@
 
 @section('content')
 <section class="login-section" style="font-family: 'Montserrat', sans-serif; background-color: #f9fdf8; min-height: 50vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">  
+    {{-- <pre>{{ var_dump($category) }}</pre> --}}
 
     <div class="container text-left" style="padding-top: 50px">
         <h1 class="display-4 fw-bold" style="color:black;">{{ strtoupper($category->nama) }}</h1>
@@ -60,6 +61,26 @@
     </div>
 </div>
 
+<nav aria-label="Transaction pagination" class="d-flex justify-content-center mt-4">
+                    {{ $services->links() }}
+                </nav>
+                <style>
+                .pagination .page-link {
+                    color: #40744E;
+                    border: 1px solid #40744E;
+                }
 
+                .pagination .page-item.active .page-link {
+                    background-color: #40744E;
+                    border-color: #40744E;
+                    color: white;
+                }
+
+                .pagination .page-link:hover {
+                    background-color: #40744E;
+                    color: white;
+                    border-color: #40744E;
+                }
+            </style>
 </section>
 @endsection

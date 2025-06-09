@@ -72,96 +72,88 @@
 
                 <!-- Filter -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="mb-0" style="color: #014A3F;"><strong>Ulasan</strong></h5>
-                    <select class="form-select w-auto" id="filterSelect" onchange="filterUlasan()" style="border-color: #014A3F; color: #014A3F;">
+                    <h5 class="mb-0" style="color: #014A3F; margin-left:15px;"><strong>Ulasan</strong></h5>
+                    <select class="form-select w-auto" id="filterSelect" onchange="filterUlasan()" style="border-color: #014A3F; color: #014A3F; margin-right:15px">
                         <option value="semua">Semua</option>
                         <option value="sudah">Sudah Diulas</option>
                         <option value="belum">Belum Diulas</option>
                     </select>
                 </div>
+                
+                @foreach ($orders as $order)
+                    @if ($order->ulasan)
+                        <div class="card border-success" style="margin:15px;">
+                            <div class="card-body">
+                                <h6 class="card-title" style="color: #014A3F;"><strong>Order: {{ $order->id }}</strong></h6>
+                                <div class="d-flex align-items-center mb-2" style="font-size: 14px;">
+                                    <span style="color: #ffc107;">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            @if ($i <= $order->ulasan->nilai)
+                                                ★
+                                            @else
+                                                ☆
+                                            @endif
+                                        @endfor
+                                    </span>
+                                    <span class="ms-2 text-muted" style="font-size: 13px;">({{ number_format($order->ulasan->nilai, 1) }})</span>
+                                </div>
+                                <p class="card-text text-muted" style="font-size: 14px;">
+                                    {{ $order->ulasan->komen }}
+                                </p>
+                                <p class="text-muted mb-2" style="font-size: 13px;">
+                                    Transaksi: {{ \Carbon\Carbon::parse($order->tanggal_jadwal)->format('d M Y • H:i') }} WIB
+                                </p>
+                            </div>
+                        </div>
+                    @else
+                        <div class="card border-success" style="margin:15px;">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-0" style="color: #014A3F;"><strong>Order: {{ $order->id }}</strong></h6>
+                                    <p class="text-muted mb-2" style="font-size: 13px;">
+                                        Transaksi: {{ \Carbon\Carbon::parse($order->tanggal_jadwal)->format('d M Y • H:i') }} WIB
+                                    </p>
+                                    <p class="mb-0 text-muted" style="font-size: 14px;">Belum ada ulasan</p>
+                                </div>
+                                <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#ulasanModal" data-order-id="{{ $order->id }}" >Tulis Ulasan</a>
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
 
-                <!-- Sudah Diulas -->
-                <div id="sudahDiulas" class="d-flex flex-column gap-3 mb-4">
-                    <div class="card border-success">
-                        <div class="card-body">
-                            <h6 class="card-title" style="color: #014A3F;"><strong>Setrika Pakaian</strong></h6>
-                            <div class="d-flex align-items-center mb-2" style="font-size: 14px;">
-                                <span style="color: #ffc107;">★★★★★</span>
-                                <span class="ms-2 text-muted" style="font-size: 13px;">(5.0)</span>
-                            </div>
-                            <p class="card-text text-muted" style="font-size: 14px;">
-                                Sangat puas dengan pelayanannya! Pekerja datang tepat waktu dan hasilnya sangat rapi.
-                            </p>
-                            <p class="text-muted mb-2" style="font-size: 13px;">Transaksi: 10 Mei 2025</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Belum Diulas -->
-                <div id="belumDiulas" class="d-flex flex-column gap-3" style="display: none;">
-                    <div class="card border-secondary">
-                        <div class="card-body d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-0" style="color: #014A3F;"><strong>Cuci Sofa</strong></h6>
-                                <p class="text-muted mb-2" style="font-size: 13px;">Transaksi: 12 Mei 2025</p>
-                                <p class="mb-0 text-muted" style="font-size: 14px;">Belum ada ulasan</p>
-                            </div>
-                            <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#ulasanModal">Tulis Ulasan</a>
-                        </div>
-                    </div>
-                    <div class="card border-secondary">
-                        <div class="card-body d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-0" style="color: #014A3F;"><strong>Pembersihan Karpet</strong></h6>
-                                <p class="text-muted mb-2" style="font-size: 13px;">Transaksi: 13 Mei 2025</p>
-                                <p class="mb-0 text-muted" style="font-size: 14px;">Belum ada ulasan</p>
-                            </div>
-                            <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#ulasanModal">Tulis Ulasan</a>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 </div>
+<nav aria-label="Transaction pagination" class="d-flex justify-content-center mt-4">
+                    {{ $orders->links() }}
+                </nav>
+                <style>
+                .pagination .page-link { color: #40744E; border: 1px solid #40744E; }
+                .pagination .page-item.active .page-link { background-color: #40744E; border-color: #40744E; color: white; }
+                .pagination .page-link:hover { background-color: #40744E; color: white; border-color: #40744E; }
+                </style>
 
 <!-- Modal Ulasan -->
 <div class="modal fade" id="ulasanModal" tabindex="-1" aria-labelledby="ulasanModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-3 border-0">
+    <div class="modal-dialog modal-dialog-centered ">
+        <div class="modal-content rounded-3 border-0 ">
             <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title mx-auto" id="ulasanModalLabel" style="color: #014A3F;"><strong>Ulasan</strong></h5>
+                <h2 class="modal-title " id="ulasanModalLabel" style="color: #014A3F;"><strong>Ulasan</strong></h2>
                 <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body pt-0">
-                <div class="d-flex align-items-center mb-3">
-                    <img src="{{ asset('Images/cleaning-2.png') }}" alt="Cuci Sofa" class="rounded me-3" width="60" height="60">
-                    <div>
-                        <h6 class="mb-1" style="color: #014A3F;"><strong>Cuci Sofa</strong></h6>
-                        <p class="mb-0 text-muted" style="font-size: 14px;">2 Unit</p>
-                    </div>
-                </div>
+            <div class="mb-3 text-center fs-4 text-warning" id="bintangContainer">
+                @for ($i = 1; $i <= 5; $i++)
+                    <i class="bi bi-star" data-rating="{{ $i }}" style="cursor: pointer;"></i>
+                @endfor
+            </div>
 
-                <div class="mb-3 text-center fs-4 text-warning" id="bintangContainer">
-                    @for ($i = 1; $i <= 5; $i++)
-                        <i class="bi bi-star" data-rating="{{ $i }}" style="cursor: pointer;"></i>
-                    @endfor
-                </div>
+            <div class="mb-3" style="margin-left:10px; margin-right:10px;">
+                <textarea class="form-control" id="ulasanTeks" rows="3" placeholder="Apa hal yang ingin Anda ceritakan?"></textarea>
+            </div>
 
-                <div class="mb-3">
-                    <textarea class="form-control" id="ulasanTeks" rows="3" placeholder="Apa hal yang ingin Anda ceritakan?"></textarea>
-                </div>
-
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" id="anonimCheck">
-                    <label class="form-check-label" for="anonimCheck">
-                        Anonim
-                    </label>
-                </div>
-
-                <div class="d-grid">
-                    <button type="button" class="btn text-white" style="background-color: #006838;" onclick="submitUlasan()">Simpan</button>
-                </div>
+            <div class="d-grid" style="margin-left:10px; margin-right:10px; margin-bottom:20px;">
+                <button type="button" class="btn text-white" id="submitUlasanBtn" style="background-color: #006838;">Simpan</button>
             </div>
         </div>
     </div>
@@ -175,24 +167,68 @@ function confirmLogout(event) {
     }
 }
 
-function filterUlasan() {
-    const filter = document.getElementById('filterSelect').value;
-    const sudahDiulas = document.getElementById('sudahDiulas');
-    const belumDiulas = document.getElementById('belumDiulas');
+var ulasanModal = document.getElementById('ulasanModal');
+ulasanModal.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;
+    var orderId = button.getAttribute('data-order-id');
 
-    if (filter === 'semua') {
-        sudahDiulas.style.display = 'flex';
-        belumDiulas.style.display = 'flex';
-    } else if (filter === 'sudah') {
-        sudahDiulas.style.display = 'flex';
-        belumDiulas.style.display = 'none';
-    } else if (filter === 'belum') {
-        sudahDiulas.style.display = 'none';
-        belumDiulas.style.display = 'flex';
-    }
+    document.getElementById('submitUlasanBtn').setAttribute('data-order-id', orderId);
+
+    resetUlasanModal();
+});
+
+function resetUlasanModal() {
+    const stars = document.querySelectorAll('#bintangContainer i');
+    stars.forEach(star => {
+        star.classList.remove('bi-star-fill');
+        star.classList.add('bi-star');
+    });
+    document.getElementById('ulasanTeks').value = '';
 }
 
-// Rating stars functionality
+function submitUlasan() {
+    const rating = document.querySelectorAll('#bintangContainer .bi-star-fill').length;
+    const reviewText = document.getElementById('ulasanTeks').value.trim();
+    const orderId = document.getElementById('submitUlasanBtn').getAttribute('data-order-id');
+
+    if (rating === 0) {
+        alert('Harap berikan rating!');
+        return;
+    }
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    fetch('/ulasan/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+        },
+        body: JSON.stringify({
+            order_id: orderId,
+            nilai: rating,
+            komen: reviewText
+        })
+    })
+    .then(async response => {
+        const data = await response.json();
+        if (!response.ok) {
+            alert('Gagal mengirim ulasan: ' + (data.message || 'Terjadi kesalahan'));
+            throw new Error(data.message || 'Error response');
+        }
+        return data;
+    })
+    .then(data => {
+        alert('Ulasan berhasil dikirim!');
+        var modalInstance = bootstrap.Modal.getInstance(ulasanModal);
+        modalInstance.hide();
+        location.reload(); 
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
+    });
+}
+
 document.querySelectorAll('#bintangContainer i').forEach(star => {
     star.addEventListener('click', function() {
         const rating = this.getAttribute('data-rating');
@@ -210,26 +246,7 @@ document.querySelectorAll('#bintangContainer i').forEach(star => {
     });
 });
 
-function submitUlasan() {
-    const rating = document.querySelectorAll('#bintangContainer .bi-star-fill').length;
-    const reviewText = document.getElementById('ulasanTeks').value;
-    const isAnonymous = document.getElementById('anonimCheck').checked;
-
-    if (rating === 0) {
-        alert('Harap berikan rating!');
-        return;
-    }
-
-    console.log({
-        rating,
-        reviewText,
-        isAnonymous
-    });
-
-    const modal = bootstrap.Modal.getInstance(document.getElementById('ulasanModal'));
-    modal.hide();
-
-    alert('Ulasan berhasil dikirim!');
-}
+document.getElementById('submitUlasanBtn').addEventListener('click', submitUlasan);
 </script>
+
 @endsection

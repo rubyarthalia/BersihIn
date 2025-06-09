@@ -33,7 +33,7 @@
 
       <div class="col-md-6 text-center text-md-start">
         <div style="max-width: 500px; color: #014A3F; font-family: 'Montserrat', sans-serif; margin: auto;">
-            <a href="{{ $logged_in ? route('cart.show') : route('login.show') }}" 
+            <a href="{{ Auth::guard('customer')->check() ? route('layanan_customer.show', ['kategori' => 'cleaning', 'category_id' => 'C01']) : route('login.show') }}" 
           class="px-3 py-1 mt-3 mb-3" 
           style="background-color: #E0EAB8; color: #014A3F; border-radius: 20px; text-decoration: none; display: inline-block;">
             Pesan Sekarang <i class="bi bi-arrow-down-right" style="font-size: 10px"></i>
@@ -87,21 +87,21 @@
 <div class="section-separator mx-auto my-5"id="layanan-kami"></div>
 
 {{-- Bagian Layanan Kami --}}
-<section class="py-5 text-center" >
+<section class="py-5 text-center">
   <div class="container" style="color: #014A3F; font-family: 'Montserrat', sans-serif">
     <h2 class="fw-bold mb-4">Layanan Kami</h2>
     @php
       $services = [
-        ['img' => 'cleaning.png', 'label' => 'CLEANING'],
-        ['img' => 'disinfektan.png', 'label' => 'DISINFECTANT'],
-        ['img' => 'laundry.png', 'label' => 'LAUNDRY'],
-        ['img' => 'pipa.png', 'label' => 'MAINTENANCE'],
+        ['img' => 'cleaning.png', 'label' => 'CLEANING', 'kategori' => 'cleaning', 'category_id' => 'C01'],
+        ['img' => 'disinfektan.png', 'label' => 'DISINFECTION', 'kategori' => 'disinfection', 'category_id' => 'C04'],
+        ['img' => 'laundry.png', 'label' => 'LAUNDRY', 'kategori' => 'laundry', 'category_id' => 'C02'],
+        ['img' => 'pipa.png', 'label' => 'MAINTENANCE', 'kategori' => 'maintenance', 'category_id' => 'C03'],
       ];
     @endphp
     <div class="row">
       @foreach ($services as $i => $s)
         <div class="col-md-6 mb-4">
-          <a href="{{ route('layanan_customer.show', ['kategori' => 'cleaning', 'category_id' => 'C01']) }}" class="d-block text-white text-decoration-none rounded-3 p-4"
+          <a href="{{ route('layanan_customer.show', ['kategori' => $s['kategori'], 'category_id' => $s['category_id']]) }}" class="d-block text-white text-decoration-none rounded-3 p-4"
              style="background: url('/Images/{{ $s['img'] }}') center/cover no-repeat; height: 200px;">
             <div class="d-flex h-100 align-items-center justify-content-center">
               <h4 class="fw-bold" style="color: #E0EAB8">{{ $s['label'] }}</h4>
@@ -113,6 +113,7 @@
     </div>
   </div>
 </section>
+
 
 
 <div class="section-separator mx-auto my-5"></div>

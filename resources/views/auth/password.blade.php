@@ -19,8 +19,9 @@
             <button type="submit" style="width: 100%; padding: 12px; background-color: #34A853; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer;">Berikutnya</button>
         </form>
 
-        <a href="{{ route('login.show') }}" style="display: inline-block; width: 100%; padding: 12px; background-color: white; color: #34A3F; border: 1px solid #34A853; border-radius: 5px; font-size: 16px; font-weight: bold; text-align: center; text-decoration: none; cursor: pointer;">Kembali</a>
+        <a href="{{ route('login.show') }}" style="display: inline-block; width: 100%; padding: 12px; background-color: white; color: #34A853; border: 1px solid #34A853; border-radius: 5px; font-size: 16px; font-weight: bold; text-align: center; text-decoration: none; cursor: pointer;">Kembali</a>
 
     </div>
+    
 </section>
 @endsection

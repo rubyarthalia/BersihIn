@@ -7,10 +7,19 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Admin extends Authenticatable
 {
     protected $table = 'admins';
-    public $timestamps = false;
+    protected $primaryKey = 'id';    
+    public $incrementing = false;      
+    protected $keyType = 'string';     
 
-    protected $fillable = ['email', 'password', 'nama', 'nomor_telepon'];
-    protected $hidden = ['password'];
+    protected $fillable = [
+        'id', 'nama', 'nomor_telepon', 'email', 'password',
+    ];
+
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
+
+    public $timestamps = false; 
 }
 
 

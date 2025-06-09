@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Admin;
 use App\Models\Customer;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -24,9 +24,69 @@ class AuthController extends Controller
     }
     public function passwordemail_auth(Request $request)
     {
+        $request->validate([
+            'username' => 'required',
+        ]);
+
+        $userCustomer = Customer::where('email', $request->username)
+            ->orWhere('nomor_telepon', $request->username)
+            ->first();
+
+        $userAdmin = Admin::where('email', $request->username)
+            ->orWhere('nomor_telepon', $request->username)
+            ->first();
+
+        if (!$userCustomer && !$userAdmin) {
+            return back()->withErrors(['username' => 'Email atau nomor telepon tidak ditemukan.'])->withInput();
+        }
+
+        if ($userCustomer) {
+            session(['reset_user_type' => 'customer']);
+            session(['reset_user_id' => $userCustomer->id]);
+        } else if ($userAdmin) {
+            session(['reset_user_type' => 'admin']);
+            session(['reset_user_id' => $userAdmin->id]);
+        }
+
         return redirect()->route('password.show');
     }
-     
+
+    public function password_auth(Request $request)
+    {
+        $request->validate([
+            'new_password' => 'required|min:8',
+            'confirm_password' => 'required|same:new_password',
+        ]);
+
+        $userType = session('reset_user_type');
+        $userId = session('reset_user_id');
+
+        if (!$userType || !$userId) {
+            return redirect()->route('password_email.show')->withErrors(['username' => 'Session tidak valid. Silakan ulangi proses.']);
+        }
+
+        if ($userType === 'customer') {
+            $user = Customer::find($userId);
+        } elseif ($userType === 'admin') {
+            $user = Admin::find($userId);
+        } else {
+            return back()->withErrors(['username' => 'Tipe user tidak valid.']);
+        }
+
+        if (!$user) {
+            return back()->withErrors(['username' => 'User tidak ditemukan.']);
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        // Hapus session reset password
+        session()->forget(['reset_user_type', 'reset_user_id']);
+
+        return redirect()->route('login.show')->with('success', 'Password berhasil diubah. Silakan login.');
+    }
+
+
     public function signup_show()
     {
         return view('auth.signup');
@@ -56,7 +116,7 @@ class AuthController extends Controller
         $newCustomerId = $prefix . $serialPart;
 
         $customer = Customer::create([
-            'id' => $newCustomerId, 
+            'id' => $newCustomerId,
             'nama' => $request->nama,
             'email' => $request->email,
             'nomor_telepon' => $request->notelpon,
@@ -79,7 +139,7 @@ class AuthController extends Controller
         // Force a logout of all guards to ensure a clean slate before attempting a new login.
         Auth::guard('admin')->logout();
         Auth::guard('customer')->logout();
-        
+
         $request->validate([
             'username' => 'required',
             'password' => 'required',
@@ -119,7 +179,7 @@ class AuthController extends Controller
     {
         Auth::guard('admin')->logout();
         Auth::guard('customer')->logout();
-        
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

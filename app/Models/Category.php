@@ -9,6 +9,8 @@ class Category extends Model
 {
     //
     protected $table ='categories';
+    protected $keyType = 'string'; 
+    public $incrementing = false; 
 
     public function services():HasMany {
         return $this->hasMany(Service::class, 'category_id');
