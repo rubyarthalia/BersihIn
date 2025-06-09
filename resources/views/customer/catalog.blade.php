@@ -180,12 +180,20 @@
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
+                    if (data.success) {
                     alert(data.success);
                 } else {
                     alert(data.error || "Gagal menambahkan ke keranjang.");
                 }
+                    window.location.href = "{{ route('cart.show') }}";
+                } else {
+                    alert(data.error || "Gagal menambahkan ke keranjang.");
+                }
+            })
+            .catch(() => {
+                alert('Terjadi kesalahan saat menambahkan ke keranjang.');
             });
-        } else {
+        }else {
             window.location.href = url.toString();
         }
     });

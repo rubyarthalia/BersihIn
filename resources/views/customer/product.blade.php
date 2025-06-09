@@ -145,7 +145,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Saat tombol open modal ditekan
     document.querySelectorAll('.open-modal-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            // Ambil data service dari atribut data-*
             selectedService = {
                 id: btn.dataset.id,
                 nama: btn.dataset.nama,
@@ -154,17 +153,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 gambar: btn.dataset.gambar
             };
             modalMode = btn.dataset.mode;
+            document.getElementById('modalActionBtn').textContent = modalMode === 'cart' ? 'Tambah ke Keranjang' : 'Pesan Sekarang';
 
-            // Update tombol modal sesuai mode
-            const modalActionBtn = document.getElementById('modalActionBtn');
+            const sectionTanggalJam = document.getElementById('section-tanggal-jam');
             if (modalMode === 'cart') {
-                modalActionBtn.textContent = 'Tambah ke Keranjang';
-                modalActionBtn.classList.remove('btn-primary');
-                modalActionBtn.classList.add('btn-success');
+                sectionTanggalJam.style.display = 'none';
             } else {
-                modalActionBtn.textContent = 'Pesan Sekarang';
-                modalActionBtn.classList.remove('btn-success');
-                modalActionBtn.classList.add('btn-primary');
+                sectionTanggalJam.style.display = 'block';
             }
         });
     });
@@ -182,7 +177,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const qty = document.getElementById('qty-input').value || 1;
 
         if (modalMode === 'cart') {
-            // Tambah ke keranjang via API
             fetch("{{ route('cart.add') }}", {
                 method: "POST",
                 headers: {
@@ -197,10 +191,12 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
+                    if (data.success) {
                     alert(data.success);
-                    // Bisa ditambah reset modal / close modal jika perlu
-                    var modal = bootstrap.Modal.getInstance(document.getElementById('orderModal'));
-                    modal.hide();
+                } else {
+                    alert(data.error || "Gagal menambahkan ke keranjang.");
+                }
+                    window.location.href = "{{ route('cart.show') }}";
                 } else {
                     alert(data.error || "Gagal menambahkan ke keranjang.");
                 }
@@ -208,7 +204,8 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(() => {
                 alert('Terjadi kesalahan saat menambahkan ke keranjang.');
             });
-        } else {
+        }
+ else {
             // Redirect ke halaman order_show dengan query params lengkap
             const url = new URL("{{ route('order.show') }}", window.location.origin);
             Object.entries(selectedService).forEach(([key, val]) => url.searchParams.append(key, val));
@@ -257,45 +254,38 @@ function decreaseQty() {
 
 <!-- Modal -->
 <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5 text-center w-100" id="orderModalLabel" style="font-weight: bold;">Detail Pesanan</h1>
-                <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p class="fw-bold">Tanggal</p>
-                <div class="d-flex flex-wrap gap-2 mb-3" id="tanggalOptions"></div>
-
-                <p class="fw-bold">Jam</p>
-                <div class="d-flex flex-wrap gap-2 mb-3" id="jamOptions"></div>
-
-                <p class="fw-bold">Jumlah</p>
-                <div id="quantity-container" class="d-flex align-items-center border rounded" style="width: fit-content;">
-                    <button type="button" onclick="decreaseQty()" style="width: 40px; height: 40px; border: none; background: white; font-size: 20px; color: #014A3F;">−</button>
-                    <input id="qty-input" type="text" value="1" class="form-control text-center" style="width: 50px; border: none;">
-                    <button type="button" onclick="increaseQty()" style="width: 40px; height: 40px; border: none; background: white; font-size: 20px; color: #014A3F;">+</button>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-center w-100" id="orderModalLabel" style="font-weight: bold;">Detail Pesanan</h1>
+                    <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                @auth('customer')
-                        <button 
-                            id="modalActionBtn"
-                            class="btn py-2 px-4" 
-                            style="background-color: #40744E; color: white; border-radius: 5px; width: 100%; font-size: 14px; font-weight: bold;">
-                            Pesan Sekarang
-                        </button>
+                <div class="modal-body">
+                    <div id="section-tanggal-jam">
+                        <p class="fw-bold">Tanggal</p>
+                        <div class="d-flex flex-wrap gap-2 mb-3" id="tanggalOptions"></div>
+
+                        <p class="fw-bold">Jam</p>
+                        <div class="d-flex flex-wrap gap-2 mb-3" id="jamOptions"></div>
+                    </div>
+
+                    <p class="fw-bold">Jumlah</p>
+                    <div id="quantity-container" class="d-flex align-items-center border rounded" style="width: fit-content;">
+                        <button onclick="decreaseQty()" style="width: 40px; height: 40px; border: none; background: white; font-size: 20px; color: #014A3F;">−</button>
+                        <input id="qty-input" type="text" value="1" class="form-control text-center" style="width: 50px; border: none;">
+                        <button onclick="increaseQty()" style="width: 40px; height: 40px; border: none; background: white; font-size: 20px; color: #014A3F;">+</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    @auth('customer')
+                        <button id="modalActionBtn" class="btn btn-success w-100">Pesan Sekarang</button>
                     @else
-                    <button id="modalActionBtn" type="button" class="btn" disabled
-                        style="font-family: 'Hind', sans-serif; color: white; background-color: grey; width: 100%; border: 1px solid #014A3F;"
-                        title="Anda harus login terlebih dahulu untuk menyimpan pesanan.">
-                        Anda harus login terlebih dahulu untuk menyimpan pesanan
-                    </button>
+                        <button class="btn btn-secondary w-100" disabled>Login terlebih dahulu</button>
                     @endauth
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 <style>
     .radio-btn-custom {
