@@ -135,8 +135,6 @@ class AuthController extends Controller
 
     public function login_auth(Request $request)
     {
-        // ----> ADDED THIS DEFENSIVE LOGIC <----
-        // Force a logout of all guards to ensure a clean slate before attempting a new login.
         Auth::guard('admin')->logout();
         Auth::guard('customer')->logout();
 

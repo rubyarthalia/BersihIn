@@ -90,8 +90,6 @@ class AdminController extends Controller
 
             // Format jadi SRVC001, SRVC002, ...
             $newId = 'SRVC' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
-
-
             Service::create([
                 'id' => $newId,
                 'nama' => $validated['nama'],
