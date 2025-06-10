@@ -2,71 +2,45 @@
 
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Authentication Defaults
-    |--------------------------------------------------------------------------
-    */
-
+    // Defaults
     'defaults' => [
-        'guard' => 'web', // Let's default to customer, can also be 'web'
+        'guard' => 'web', 
         'passwords' => 'users',
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Authentication Guards
-    |--------------------------------------------------------------------------
-    */
-
+    // Guards
     'guards' => [
-        // Default Laravel web guard (good practice to keep)
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        // Your custom admin guard
         'admin' => [
             'driver' => 'session',
             'provider' => 'admins',
         ],
-        // Your custom customer guard
         'customer' => [
             'driver' => 'session',
             'provider' => 'customers',
         ],
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | User Providers
-    |-------------------------------------------------------------------------
-    */
-
+    // Providers
     'providers' => [
-        // Default Laravel user provider
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-        // Your custom admins provider
         'admins' => [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
         ],
-        // Your custom customers provider
         'customers' => [
             'driver' => 'eloquent',
             'model' => App\Models\Customer::class,
         ],
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Resetting Passwords
-    |--------------------------------------------------------------------------
-    */
-
+    // Passwords
     'passwords' => [
         'users' => [
             'provider' => 'users',
@@ -76,12 +50,7 @@ return [
         ],
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Password Confirmation Timeout
-    |--------------------------------------------------------------------------
-    */
-
+    // Password Confirmation Timeout
     'password_timeout' => 10800,
 
 ];
