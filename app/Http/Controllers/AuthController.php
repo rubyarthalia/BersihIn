@@ -82,7 +82,6 @@ class AuthController extends Controller
 
         // Hapus session reset password
         session()->forget(['reset_user_type', 'reset_user_id']);
-
         return redirect()->route('login.show')->with('success', 'Password berhasil diubah. Silakan login.');
     }
 

@@ -12,7 +12,6 @@ class AdminController extends Controller
 {
     //
     public function layanan_admin_show($kategori, $category_id){
-
          
         $category = Category::where('id', $category_id)->firstOrFail();
 

@@ -150,67 +150,74 @@ class HomeController extends Controller
 
     //     return view('customer.order', compact('addresses', 'ongkos_kirim'));
     // }
+
     public function order_show(Request $request)
-{
-    $user = Auth::guard('customer')->user();
+    {
+        $user = Auth::guard('customer')->user();
 
-    if ($request->has(['id', 'nama', 'harga', 'satuan', 'gambar', 'qty'])) {
-        $data = [
-            'id' => $request->query('id'),
-            'nama' => $request->query('nama'),
-            'harga' => $request->query('harga'),
-            'satuan' => $request->query('satuan'),
-            'gambar' => $request->query('gambar'),
-            'qty' => $request->query('qty'),
-            'tanggal' => $request->query('tanggal'),
-            'jam' => $request->query('jam'),
-        ];
+        // Check if the request from "Pesan Sekarang" 
+        if ($request->has(['id', 'nama', 'harga', 'satuan', 'gambar', 'qty'])) {
+            $data = [
+                'id' => $request->query('id'),
+                'nama' => $request->query('nama'),
+                'harga' => $request->query('harga'),
+                'satuan' => $request->query('satuan'),
+                'gambar' => $request->query('gambar'),
+                'qty' => $request->query('qty'),
+                'tanggal' => $request->query('tanggal'),
+                'jam' => $request->query('jam'),
+            ];
 
-        $selected_services = [$data];
-    } else {
-        $cart = Cart::where('customer_id', $user->id)->where('status_del', 0)->first();
-        if (!$cart) {
-            return redirect()->back()->with('error', 'Cart kosong.');
+            $selected_services = [$data];
+            // SET THE ORIGIN FLAG FOR A DIRECT ORDER
+            session(['order_origin' => 'direct']);
+
+        } else { // The order is coming from the cart
+            $cart = Cart::where('customer_id', $user->id)->where('status_del', 0)->first();
+            if (!$cart) {
+                return redirect()->back()->with('error', 'Cart kosong.');
+            }
+            $jam = $request->query('jam');
+            $tanggal = $request->query('tanggal');
+
+            $selected_services = CartItem::where('cart_id', $cart->id)
+                ->where('status_del', 0)
+                ->with('service')
+                ->get()
+                ->map(function($item) use ($tanggal, $jam) {
+                    return [
+                        'id' => $item->service->id,
+                        'nama' => $item->service->nama,
+                        'harga' => $item->service->harga,
+                        'satuan' => $item->service->satuan,
+                        'gambar' => $item->service->gambar,
+                        'qty' => $item->jumlah,
+                        'tanggal' => $tanggal,
+                        'jam' => $jam,
+                    ];
+                });
+            
+            // SET THE ORIGIN FLAG FOR A CART ORDER
+            session(['order_origin' => 'from_cart']);
         }
-        $jam = $request->query('jam');
-        $tanggal = $request->query('tanggal');
 
-        $selected_services = CartItem::where('cart_id', $cart->id)
+        // Simpan ke session
+        session(['selected_services' => $selected_services]);
+
+        // Ambil alamat customer
+        $addresses = $user->addresses()
             ->where('status_del', 0)
-            ->with('service')
+            ->with('subdistrict')
             ->get()
-            ->map(function($item) use ($tanggal, $jam) {
-                return [
-                    'id' => $item->service->id,
-                    'nama' => $item->service->nama,
-                    'harga' => $item->service->harga,
-                    'satuan' => $item->service->satuan,
-                    'gambar' => $item->service->gambar,
-                    'qty' => $item->jumlah,
-                    'tanggal' => $tanggal,
-                    'jam' => $jam,
-                ];
+            ->map(function ($address) {
+                $address->ongkos_kirim = $address->subdistrict->ongkos_kirim ?? 0;
+                return $address;
             });
 
+        $ongkos_kirim = $addresses->first()->ongkos_kirim ?? 0;
+
+        return view('customer.order', compact('addresses', 'ongkos_kirim'));
     }
-
-    // Simpan ke session
-    session(['selected_services' => $selected_services]);
-
-    // Ambil alamat customer
-    $addresses = $user->addresses()
-        ->where('status_del', 0)
-        ->with('subdistrict')
-        ->get()
-        ->map(function ($address) {
-            $address->ongkos_kirim = $address->subdistrict->ongkos_kirim ?? 0;
-            return $address;
-        });
-
-    $ongkos_kirim = $addresses->first()->ongkos_kirim ?? 0;
-
-    return view('customer.order', compact('addresses', 'ongkos_kirim'));
-}
 
     public function store(Request $request)
     {
@@ -240,7 +247,7 @@ class HomeController extends Controller
         foreach ($selected_services as $service) {
             $total_jasa += $service['harga'] * $service['qty'];
         }
-    
+
         $order = Order::create([
             'id' => $orderId,
             'customer_id' => $customer->id,
@@ -268,16 +275,20 @@ class HomeController extends Controller
                 'status_del' => 0,
             ]);
         }
-        // Hapus item yang sudah dipilih dari cart
-        $cart = Cart::where('customer_id', $customer->id)->where('status_del', 0)->first();
+        
+        // Check the session flag. Only clear the cart if the order originated from the cart.
+        if (session('order_origin') === 'from_cart') {
+            $cart = Cart::where('customer_id', $customer->id)->where('status_del', 0)->first();
 
-        if ($cart) {
-            CartItem::where('cart_id', $cart->id)
-                ->where('status_del', 0)
-                ->delete();
+            if ($cart) {
+                CartItem::where('cart_id', $cart->id)
+                    ->where('status_del', 0)
+                    ->delete();
+            }
         }
-
-
+        // Clean up the session flags after use
+        session()->forget(['selected_services', 'order_origin']);
+        // END OF THE MODIFIED LOGIC
         Config::$serverKey = config('midtrans.server_key');
         Config::$isProduction = config('midtrans.is_production');
         Config::$isSanitized = true;
