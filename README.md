@@ -2,6 +2,8 @@
 
 BersihIn is a comprehensive web-based platform built with the **Laravel** framework, designed to connect customers with professional cleaning services. The application manages everything from service browsing and cart management to secure payments and user reviews.
 
+Live Demo: https://bersihin.sift-uc.id/
+
 ---
 
 ## ✨ Features
